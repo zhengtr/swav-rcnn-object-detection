@@ -1,11 +1,17 @@
+#
+#   Recursively replace BatchNorm2d layers with FrozenBatchNorm2d, GroupNorm, or InstanceNorm2d
+#   
+#   TODO: All three can be combined into one generalized function
+#
+
+
 import customized_module as my_nn
 import torch
 import torch.nn as nn
 
 def replace_bn_FBN(m, name):    
     """
-        Warning: not a generalized verion! 
-        Use it only if you know what you are doing.
+        FrozenBatchNorm2d
     """
     for attr_str in dir(m):
         target_attr = getattr(m, attr_str)
@@ -20,8 +26,7 @@ def replace_bn_FBN(m, name):
 
 def replace_bn_GN(m, name):    
     """
-        Warning: not a generalized verion! 
-        Use it only if you know what you are doing.
+        GroupNorm
     """
     for attr_str in dir(m):
         target_attr = getattr(m, attr_str)
@@ -50,8 +55,7 @@ def replace_bn_GN(m, name):
 
 def replace_bn_IN(m, name):    
     """
-        Warning: not a generalized verion! 
-        Use it only if you know what you are doing.
+        InstanceNorm2d
     """
     for attr_str in dir(m):
         target_attr = getattr(m, attr_str)

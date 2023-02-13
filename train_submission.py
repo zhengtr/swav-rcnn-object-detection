@@ -1,7 +1,6 @@
 # -----------------------------------------------------------
 # Load swav pretrained backbone and train FasterRCNN using supervised dataset
 #
-#   note: only work for resnet50
 # -----------------------------------------------------------
 import argparse
 import build_model
@@ -38,7 +37,7 @@ parser.add_argument("--nmb_prototypes", default=1000, type=int,
 #### training parameters ####
 #############################
 parser.add_argument("--mode", choices=['train', 'eval', 'resume'], 
-                    default='train', type=str, help="Choose action.") #TODO: add resume impl
+                    default='train', type=str, help="Choose action.") 
 parser.add_argument("--epochs", default=25, type=int,
                     help="number of total epochs to run")
 parser.add_argument("--eval_freq", default=2, type=int,
@@ -245,7 +244,7 @@ def main():
     if args.debug == 1:
         index = list(range(10))
         train_dataset = torch.utils.data.Subset(train_dataset, index)
-        # valid_dataset = torch.utils.data.Subset(valid_dataset, index)
+        valid_dataset = torch.utils.data.Subset(valid_dataset, index)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=2, shuffle=True, num_workers=2, collate_fn=utils.collate_fn)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=2, shuffle=False, num_workers=2, collate_fn=utils.collate_fn)
@@ -261,12 +260,6 @@ def main():
     low_name = []
     high_lr_param = []
     high_name = []
-
-    # for name, m in model.named_modules():
-    #     if "backbone.body" in name:
-    #         if "bn" in name or "backbone.body.bn" in name:
-    #             m.running_var.fill_(1)
-    #             m.running_mean.zero_()
 
     for name, param in model.named_parameters():
         if "backbone.body" in name:
@@ -344,9 +337,6 @@ def main():
                     coco_res, _ = evaluate(model, valid_loader, device=device)
                     eval_result[epoch] = coco_res.coco_eval
 
-    # fuck GCP
-    # with open(os.path.join(args.checkpoint_path, "eval_res.pickle"), "w") as outfile:
-    #     pickle.dump(eval_result, outfile)
     torch.save(model, "model_final.pth")
 if __name__ == "__main__":
     main()
